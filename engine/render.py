@@ -118,10 +118,11 @@ def _inject_inline_photos(body_html, extra_photos):
         return body_html
     cap = escape(p.get("caption") or "Related editorial photograph")
     cred = escape(p.get("credit") or "Wikimedia Commons")
+    label = "File photo: " if p.get("file_photo") else ""
     fig = (
         f'<figure style="margin:24px 0;text-align:center">'
         f'<img alt="{cap}" loading="lazy" src="{escape(p["url"])}" style="width:100%;height:auto;border-radius:6px"/>'
-        f'<figcaption style="font-size:13px;color:#666;margin-top:6px">{cap} (Photo: {cred})</figcaption>'
+        f'<figcaption style="font-size:13px;color:#666;margin-top:6px">{label}{cap} (Photo: {cred})</figcaption>'
         f'</figure>\n'
     )
     parts = re.split(r"(?=<h2\b)", body_html, flags=re.I)
@@ -132,14 +133,16 @@ def _inject_inline_photos(body_html, extra_photos):
     return body_html + "\n" + fig
 
 
-def post_html(article, image_src, credit=None, extra_photos=None):
-    """The HTML pasted into (or sent to) Blogger as the post body."""
+def post_html(article, image_src, credit=None, extra_photos=None, caption=None):
+    """The HTML pasted into (or sent to) Blogger as the post body. A caption marks an archive
+    ("file") photo, so readers never mistake it for a picture of the event itself."""
     out = []
     if image_src:
-        out.append(f'<div class="separator" style="text-align:center"><img alt="{escape(article["title"])}" '
+        out.append(f'<div class="separator" style="text-align:center"><img alt="{escape(caption or article["title"])}" '
                    f'src="{escape(image_src)}" width="1200" height="675" style="width:100%;height:auto"/></div>')
     if credit:
-        out.append(f'<p style="font-size:13px;color:#777;margin-top:4px">Photo: {escape(credit)}</p>')
+        lead = f"File photo: {escape(caption)}. " if caption else ""
+        out.append(f'<p style="font-size:13px;color:#777;margin-top:4px">{lead}Photo: {escape(credit)}</p>')
     out.append(f'<p><strong>{escape(article.get("dek", ""))}</strong></p>')
     out.append(_inject_inline_photos(article["body_html"], extra_photos))
     out.append(_internal_and_partner_links(article))

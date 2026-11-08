@@ -16,7 +16,7 @@ from . import checker, config, editor, images, render, research, sources, writer
 MAX_REVISIONS = 2
 MAX_FAILURES = 3          # stop after this many failed stories in one run
 BLOCK_FILE = config.DATA_DIR / "publish_block.json"
-BLOCK_HOURS = 3           # after Blogger refuses a post, skip runs for this long
+BLOCK_HOURS = 6           # after Blogger refuses a post, skip runs for this long
 
 
 def blocked_recently():
@@ -58,19 +58,21 @@ def produce(story, gold, out_root, label_counts, label_cap, blog=None):
         article = writer.revise(article, docs, report["problems"])
         report = checker.review(article, docs)
 
+    writer.fix_keyword_case(article)
     folder = out_root / article["slug"][:80]
     folder.mkdir(parents=True, exist_ok=True)
     cover = images.cover_card(article["title"], article["label"], folder / "cover.jpg")
-    photos = images.find_article_photos(story_plan, article, max_photos=2)
+    # Disasters get one well-matched photo rather than a second, weaker one
+    photos = images.find_article_photos(story_plan, article, max_photos=1 if story_plan.get("sensitive") else 2)
     photo = photos[0] if photos else None
     extra_photos = photos[1:] if len(photos) > 1 else []
     if photo:
-        image_src, credit = photo["url"], photo["credit"]
+        image_src, credit, caption = photo["url"], photo["credit"], photo.get("caption")
     else:
-        # Cover cards need public hosting (GitHub); until then online posts go without one
-        image_src, credit = (images.hosted_url(cover) if blog else cover.name), None
+        # The branded cover is uploaded first so it is online when the post goes live
+        image_src, credit, caption = (images.publish_cover(cover) if blog else cover.name), None, None
 
-    body = render.post_html(article, image_src, credit, extra_photos=extra_photos)
+    body = render.post_html(article, image_src, credit, extra_photos=extra_photos, caption=caption)
     (folder / "post.html").write_text(body, encoding="utf-8")
     (folder / "preview.html").write_text(render.preview_page(article, body, report), encoding="utf-8")
     label_counts[article["label"]] = label_counts.get(article["label"], 0) + 1

@@ -140,16 +140,18 @@ Write 4-5 FAQ items."""
     folder = out_root / article["slug"][:80]
     folder.mkdir(parents=True, exist_ok=True)
     cover = images.cover_card(article["title"], "Gold", folder / "cover.jpg")
-    plan_info = {"wikipedia_title": "Gold as an investment", "main_entity": "Gold bullion", "focus_keyword": "gold bars central bank"}
-    photos = images.find_article_photos(plan_info, article, max_photos=2)
+    plan_info = {"wikipedia_title": "Gold as an investment", "main_entity": "Gold bullion",
+                 "focus_keyword": "gold bars central bank",
+                 "visual_subjects": ["gold bullion bars", "gold bullion coins", "gold bars vault"]}
+    photos = images.find_article_photos(plan_info, dict(article, label="Gold"), max_photos=2)
     photo = photos[0] if photos else None
     extra_photos = photos[1:] if len(photos) > 1 else []
     if photo:
-        image_src, credit = photo["url"], photo["credit"]
+        image_src, credit, caption = photo["url"], photo["credit"], photo.get("caption")
     else:
-        image_src, credit = (images.hosted_url(cover) if publish_to_blog else cover.name), None
+        image_src, credit, caption = (images.publish_cover(cover) if publish_to_blog else cover.name), None, None
 
-    body = render.post_html(article, image_src, credit, extra_photos=extra_photos)
+    body = render.post_html(article, image_src, credit, extra_photos=extra_photos, caption=caption)
     report = {"decision": "publish", "problems": [], "fact_check": {"unsupported": [], "summary": "Verified against live gold feed"}}
     (folder / "post.html").write_text(body, encoding="utf-8")
     (folder / "preview.html").write_text(render.preview_page(article, body, report), encoding="utf-8")

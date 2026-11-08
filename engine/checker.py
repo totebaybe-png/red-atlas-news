@@ -5,7 +5,11 @@ from . import config, llm
 from .writer import _source_block
 
 BANNED = ["as an ai", "delve", "in today's fast-paced", "it is worth noting", "in conclusion",
-          "language model", "i cannot", "[source", "lorem ipsum"]
+          "language model", "i cannot", "[source", "lorem ipsum",
+          # phrases that make readers (and Google) think "an AI wrote this"
+          "tapestry", "testament to", "remains to be seen", "only time will tell", "a stark reminder",
+          "sends shockwaves", "it is important to note", "game-changer", "plays a vital role",
+          "navigating the", "in the ever-", "underscores the importance"]
 
 
 def _plain(html):

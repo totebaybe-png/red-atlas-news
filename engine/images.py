@@ -1,6 +1,8 @@
 """Image desk: legally reusable photos from Wikimedia Commons, plus a branded cover card."""
+import os
 import platform
 import re
+import subprocess
 import textwrap
 from pathlib import Path
 
@@ -10,7 +12,10 @@ from PIL import Image, ImageDraw, ImageFont
 from . import config
 
 HEADERS = {"User-Agent": config.USER_AGENT}
-SKIP_IMAGE = r"flag|map|coat.of.arms|logo|emblem|seal|locator|diagram|chart"
+SKIP_IMAGE = (r"flag|map|coat.of.arms|logo|emblem|seal|locator|diagram|chart|graph|plot|epicent|tsum|"
+              r"poster|newspaper|stamp|banknote|signature|icon|screenshot|infographic|statistic|"
+              r"\b1[0-9]{3}\b|\b19[0-9]{2}\b")  # file names with old years (1900s and earlier)
+BAD_EXTENSIONS = (".svg", ".gif", ".pdf", ".tif", ".tiff", ".png", ".webm", ".ogv")
 FREE_LICENSES = ("cc by", "cc-by", "cc0", "public domain", "pd", "cc by-sa", "cc-by-sa")
 
 RED = (200, 16, 46)
@@ -33,7 +38,11 @@ def _commons_info(filename):
     license_name = meta.get("LicenseShortName", {}).get("value", "")
     if not license_name.lower().startswith(FREE_LICENSES):
         return None
-    if info.get("width", 0) < 600:
+    if info.get("width", 0) < 800:
+        return None
+    taken = re.sub(r"<[^>]+>", "", meta.get("DateTimeOriginal", {}).get("value", ""))
+    year = re.search(r"\b(1[89]\d\d|20\d\d)\b", taken)
+    if year and int(year.group(1)) < 2000:  # archive/historic pictures look wrong in today's news
         return None
     artist = re.sub(r"<[^>]+>", "", meta.get("Artist", {}).get("value", "")).strip() or "Unknown"
     desc = re.sub(r"<[^>]+>", " ", meta.get("ImageDescription", {}).get("value", "")).strip()
@@ -45,6 +54,7 @@ def _commons_info(filename):
         "credit": f"{artist[:80]} / {license_name} via Wikimedia Commons",
         "caption": desc if len(desc) >= 20 else clean_name[:120],
         "license": license_name,
+        "landscape": info.get("width", 0) >= info.get("height", 1) * 1.2,
     }
 
 
@@ -60,7 +70,7 @@ def _wiki_lead_photo(title):
         ).json()
         page = next(iter(resp["query"]["pages"].values()))
         name = page.get("pageimage")
-        if not name or name.lower().endswith(".svg") or re.search(SKIP_IMAGE, name, re.I):
+        if not name or name.lower().endswith(BAD_EXTENSIONS) or re.search(SKIP_IMAGE, name, re.I):
             return None
         return _commons_info(name)
     except (requests.RequestException, ValueError, KeyError, StopIteration):
@@ -81,7 +91,7 @@ def _commons_search_photos(query, limit=3, seen_urls=None):
         ).json()
         for hit in resp.get("query", {}).get("search", []):
             name = re.sub(r"^File:", "", hit.get("title", ""))
-            if not name or name.lower().endswith((".svg", ".gif", ".pdf", ".tif", ".tiff")) or re.search(SKIP_IMAGE, name, re.I):
+            if not name or name.lower().endswith(BAD_EXTENSIONS) or re.search(SKIP_IMAGE, name, re.I):
                 continue
             info = _commons_info(name)
             if info and info["url"] not in seen_urls:
@@ -132,43 +142,75 @@ def find_photo(wikipedia_title, fallback_query=""):
 
 
 def find_article_photos(story_plan, article, max_photos=2):
-    """Find up to max_photos distinct, relevant, freely licensed photos for the lead and body."""
-    photos = []
-    seen = set()
+    """Up to max_photos relevant, freely licensed archive photos. Returns [] rather than a weak match:
+    the branded cover card is better than a photo that has nothing to do with the story.
+
+    Order: the Wikipedia photo of the main person/organisation (not for disasters), then the
+    photographable subjects the editor suggested ("Egyptian National Railways train"), then, for
+    money and tech stories only, a safe generic topic image. The lead photo must be landscape.
+    """
+    plan = story_plan or {}
+    label = article.get("label", "World")
+    sensitive = bool(plan.get("sensitive"))
+    # A bare country or city name returns pyramids and tourist shots, so require 2+ words
+    subjects = [s.strip() for s in plan.get("visual_subjects", []) if s and len(s.split()) >= 2]
+    photos, seen, portrait = [], set(), None
 
     def _add(p):
-        if p and p.get("url") and p["url"] not in seen:
-            seen.add(p["url"])
-            photos.append(p)
+        nonlocal portrait
+        if not p or not p.get("url") or p["url"] in seen or len(photos) >= max_photos:
+            return
+        seen.add(p["url"])
+        if not photos and not p.get("landscape"):
+            portrait = portrait or p  # a tall photo can still go inside the article
+            return
+        photos.append(p)
 
-    # 1. Lead photo from primary entity / Wikipedia title
-    wiki_title = (story_plan or {}).get("wikipedia_title", "")
-    main_entity = (story_plan or {}).get("main_entity", "")
-    focus_kw = article.get("focus_keyword") or (story_plan or {}).get("focus_keyword", "")
-    _add(find_photo(wiki_title, fallback_query=main_entity or focus_kw))
+    if not sensitive:
+        _add(_wiki_lead_photo(plan.get("wikipedia_title", "")))
+    # One photo per subject first (variety), then a second pass if still short
+    for per_subject in (1, 2):
+        for subject in subjects:
+            for p in _commons_search_photos(subject, limit=per_subject, seen_urls=set(seen)):
+                p.setdefault("subject", subject)
+                _add(p)
+    if not photos and label != "World":
+        for query in SECTION_FALLBACKS.get(label, []):
+            for p in _commons_search_photos(query, limit=1, seen_urls=set(seen)):
+                _add(p)
+    if photos and portrait and len(photos) < max_photos:
+        photos.append(portrait)
+    for p in photos:
+        p["file_photo"] = True  # none of these were taken at the event itself
+        caption = p.get("caption", "")
+        # Commons descriptions are often in other languages; fall back to the English subject
+        if not caption or sum(c.isascii() for c in caption) < 0.9 * len(caption):
+            p["caption"] = p.get("subject") or plan.get("main_entity") or "Archive photo"
+    return photos
 
-    # 2. Secondary photos from article tags, focus keyword, and section fallbacks
-    queries = []
-    for tag in article.get("tags", []):
-        if tag and tag.lower() != main_entity.lower():
-            queries.append(tag)
-    if focus_kw:
-        queries.append(focus_kw)
-    if main_entity:
-        queries.append(main_entity)
-    queries += SECTION_FALLBACKS.get(article.get("label", "World"), SECTION_FALLBACKS["World"])
 
-    for q in queries:
-        if len(photos) >= max_photos:
-            break
-        p = find_photo(q, fallback_query=q)
-        _add(p)
-        if len(photos) < max_photos:
-            for extra in _commons_search_photos(q, limit=max_photos - len(photos), seen_urls=seen):
-                _add(extra)
-                if len(photos) >= max_photos:
-                    break
-    return photos[:max_photos]
+def publish_cover(path):
+    """On GitHub Actions, commit and push the cover card BEFORE the post goes live, and return a
+    jsDelivr URL pinned to that commit, so the image never shows as broken. None elsewhere."""
+    if os.getenv("GITHUB_ACTIONS") != "true" or not os.getenv("GITHUB_REPOSITORY"):
+        return None
+    rel = Path(path).resolve().relative_to(config.ROOT.resolve()).as_posix()
+
+    def git(*args):
+        return subprocess.run(["git", *args], cwd=config.ROOT, check=True, capture_output=True, text=True).stdout
+
+    try:
+        git("config", "user.name", "Red Atlas Bot")
+        git("config", "user.email", "bot@redatlasnews.com")
+        git("add", rel)
+        git("commit", "-m", f"cover: {Path(rel).parent.name}")
+        git("pull", "--rebase", "--autostash", "origin", "main")
+        git("push", "origin", "HEAD:main")
+        sha = git("rev-parse", "HEAD").strip()
+    except subprocess.CalledProcessError as e:
+        print(f"   cover upload failed, publishing without it: {(e.stderr or '')[-200:]}")
+        return None
+    return f"https://cdn.jsdelivr.net/gh/{os.getenv('GITHUB_REPOSITORY')}@{sha}/{rel}"
 
 
 def hosted_url(path):
