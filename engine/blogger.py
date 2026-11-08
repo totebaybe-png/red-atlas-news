@@ -42,6 +42,10 @@ def _creds():
     return creds
 
 
+class PublishBlocked(RuntimeError):
+    """Blogger temporarily refuses to create new posts (updates still work)."""
+
+
 class Blogger:
     def __init__(self):
         self.http = AuthorizedSession(_creds())
@@ -59,6 +63,9 @@ class Blogger:
                 break
             print(f"    Blogger rate-limit hit, waiting {wait}s...")
             time.sleep(wait)
+        if resp.status_code == 403 and method == "POST":
+            # Blogger's anti-spam brake on creating posts/pages: retrying only wastes time
+            raise PublishBlocked(f"Blogger refused to create content: {resp.text[:200]}")
         if resp.status_code >= 400:
             raise RuntimeError(f"Blogger API {method} {path}: {resp.status_code} {resp.text[:300]}")
         return resp.json() if resp.text else {}

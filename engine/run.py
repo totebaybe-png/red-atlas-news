@@ -14,6 +14,17 @@ from html import escape
 from . import checker, config, editor, images, render, research, sources, writer
 
 MAX_REVISIONS = 2
+MAX_FAILURES = 3          # stop after this many failed stories in one run
+BLOCK_FILE = config.DATA_DIR / "publish_block.json"
+BLOCK_HOURS = 3           # after Blogger refuses a post, skip runs for this long
+
+
+def blocked_recently():
+    """True if Blogger refused a post less than BLOCK_HOURS ago (saves Gemini quota)."""
+    if not BLOCK_FILE.exists():
+        return False
+    since = dt.datetime.fromisoformat(json.loads(BLOCK_FILE.read_text(encoding="utf-8"))["since"])
+    return dt.datetime.utcnow() - since < dt.timedelta(hours=BLOCK_HOURS)
 
 
 DEFER = "defer"  # good story, but its section is full this run: try again next run
@@ -100,6 +111,9 @@ def main():
     blog = None
     if args.publish:
         from .blogger import Blogger
+        if blocked_recently():
+            print(f"::warning::Blogger refused new posts less than {BLOCK_HOURS}h ago; skipping this run to save quota.")
+            return 0
         blog = Blogger()
         print(f"Connected to Blogger: {blog.blog['name']}")
 
@@ -118,16 +132,32 @@ def main():
     label_cap = max(1, -(-args.count // 3))
     label_counts = {}
 
+    from .blogger import PublishBlocked
+
     results = []
+    failures = 0
     for story in stories:
         if len(results) >= args.count:
             break
         print(f"\nStory (score {story['score']}, {len(story['sources'])} outlets): {story['headline']}")
         try:
             result = produce(story, gold, out_root, label_counts, label_cap, blog)
+        except PublishBlocked as e:
+            # Writing more articles that cannot be published only burns quota
+            print(f"::warning::{e}. Stopping this run; next attempt in {BLOCK_HOURS}h.")
+            config.DATA_DIR.mkdir(parents=True, exist_ok=True)
+            BLOCK_FILE.write_text(json.dumps({"since": dt.datetime.utcnow().isoformat(), "reason": str(e)[:300]}),
+                                  encoding="utf-8")
+            break
         except Exception as e:  # one bad story must not stop the newsroom
             print(f"   failed: {type(e).__name__}: {e}")
+            failures += 1
+            if failures >= MAX_FAILURES:
+                print(f"::warning::{failures} stories failed in a row; stopping this run.")
+                break
             continue
+        if blog and BLOCK_FILE.exists() and result and result != DEFER:
+            BLOCK_FILE.unlink()  # publishing works again
         if result == DEFER:
             continue
         seen["urls"] += [i["url"] for i in story["items"]]

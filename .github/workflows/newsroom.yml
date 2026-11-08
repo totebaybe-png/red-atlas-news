@@ -1,8 +1,8 @@
-name: Red Atlas Newsroom (Hourly Continuous Publishing)
+name: Red Atlas Newsroom (Every 2 Hours)
 
 on:
   schedule:
-    - cron: "25 * * * *"
+    - cron: "25 */2 * * *"
   workflow_dispatch:
 
 permissions:
@@ -15,6 +15,9 @@ concurrency:
 jobs:
   publish-news:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PYTHONUNBUFFERED: "1"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -38,13 +41,13 @@ jobs:
           GEMINI_API_KEY_6: ${{ secrets.GEMINI_API_KEY_6 }}
           GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
           BLOGGER_TOKEN: ${{ secrets.BLOGGER_TOKEN }}
-        run: python -m engine.run --count 2 --publish
+        run: python -m engine.run --count 1 --publish
 
       - name: Save seen stories, published links and cover images
         run: |
           git config user.name "Red Atlas Bot"
           git config user.email "bot@redatlasnews.com"
-          git add data/seen.json data/published_posts.json output/
+          git add -A data output
           if ! git diff --cached --quiet; then
             git commit -m "newsroom: automated run $(date -u +'%Y-%m-%d %H:%M UTC')"
             git pull --rebase --autostash origin main

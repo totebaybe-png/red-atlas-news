@@ -39,12 +39,13 @@ GEMINI_API_KEY = GEMINI_API_KEYS[0] if GEMINI_API_KEYS else ""
 
 # Tried in order across all API keys; on quota errors (429) the engine rotates keys and models.
 # Each key + model pair has its own free daily quota.
+# Full "flash" models first (better writing); "lite" models only as a last resort.
 MODELS_WRITE = [
     "gemini-3.5-flash",
-    "gemini-3.5-flash-lite",
+    "gemini-3.8-flash",
     "gemini-3.7-flash",
     "gemini-3.6-flash",
-    "gemini-3.8-flash",
+    "gemini-3.5-flash-lite",
     "gemini-3.1-flash-lite",
 ]
 MODELS_LIGHT = [
