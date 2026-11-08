@@ -338,6 +338,9 @@ def publish(pages, limit=None):
 if __name__ == "__main__":
     import sys
 
+    if "--publish" in sys.argv and config.paused_until():
+        print(f"::notice::Publishing is paused until {config.paused_until()}; nothing to do.")
+        sys.exit(0)
     data, pages = build_all()
     if "--publish" in sys.argv:
         limit = int(sys.argv[sys.argv.index("--limit") + 1]) if "--limit" in sys.argv else None

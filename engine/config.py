@@ -159,6 +159,19 @@ IMAGE_BASE_URL = os.getenv("IMAGE_BASE_URL", "").strip() or (
 
 OUTPUT_DIR = ROOT / "output"
 DATA_DIR = ROOT / "data"
+
+# Manual pause for every job that writes to Blogger: data/pause_until.json = {"until": "<ISO UTC>"}
+PAUSE_FILE = DATA_DIR / "pause_until.json"
+
+
+def paused_until():
+    """Returns the pause end time (str) while a manual pause is active, else None."""
+    if not PAUSE_FILE.exists():
+        return None
+    import datetime as _dt
+    until = json.loads(PAUSE_FILE.read_text(encoding="utf-8"))["until"]
+    end = _dt.datetime.fromisoformat(until.rstrip("Z"))
+    return until if _dt.datetime.utcnow() < end else None
 PARTNER_SITES_FILE = DATA_DIR / "partner_sites.json"
 
 

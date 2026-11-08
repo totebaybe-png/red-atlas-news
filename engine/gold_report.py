@@ -174,7 +174,14 @@ def main():
     parser.add_argument("--publish", action="store_true")
     args = parser.parse_args()
     from .blogger import PublishBlocked
+    from .run import blocked_recently
 
+    if args.publish and config.paused_until():
+        print(f"::notice::Publishing is paused until {config.paused_until()}; nothing to do.")
+        return
+    if args.publish and blocked_recently():
+        print("::warning::Blogger refused new posts recently; skipping the report to save quota.")
+        return
     try:
         generate_report(session=args.session, publish_to_blog=args.publish)
     except PublishBlocked as e:

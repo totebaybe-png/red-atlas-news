@@ -116,6 +116,9 @@ def main():
     blog = None
     if args.publish:
         from .blogger import Blogger
+        if config.paused_until():
+            print(f"::notice::Publishing is paused until {config.paused_until()}; nothing to do.")
+            return 0
         if blocked_recently():
             print(f"::warning::Blogger refused new posts less than {BLOCK_HOURS}h ago; skipping this run to save quota.")
             return 0
