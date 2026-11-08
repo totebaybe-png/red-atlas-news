@@ -50,14 +50,14 @@ class Blogger:
         self.blog = blog
 
     def _call(self, method, path, **kw):
-        # Blogger rate-limits writes; wait and retry instead of failing
-        for wait in (30, 60, 120, 240, 0):
+        for wait in (15, 30, 0):
             resp = self.http.request(method, API + path, timeout=60, **kw)
-            # 403 on a create is Blogger's anti-spam brake, so it is retried like a 429
-            throttled = resp.status_code == 429 or (resp.status_code == 403 and method == "POST")
-            if not throttled or not wait:
+            is_rate_limit = resp.status_code == 429 or (
+                resp.status_code == 403 and any(w in resp.text for w in ("rateLimit", "RATE_LIMIT", "quotaExceeded", "userRateLimitExceeded"))
+            )
+            if not is_rate_limit or not wait:
                 break
-            print(f"    Blogger asked us to slow down, waiting {wait}s...")
+            print(f"    Blogger rate-limit hit, waiting {wait}s...")
             time.sleep(wait)
         if resp.status_code >= 400:
             raise RuntimeError(f"Blogger API {method} {path}: {resp.status_code} {resp.text[:300]}")
