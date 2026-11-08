@@ -1,0 +1,7 @@
+<b:section class='pb-5' cond='data:view.url.canonical == data:blog.canonicalHomepageUrl path &quot;/p/contact.html&quot;' id='contact-page' showaddelement='no'>
+  <b:widget id='ContactForm1' locked='false' title='Send us a message' type='ContactForm' visible='true'>
+    <b:includable id='main'>
+      <b:include name='JetContactForm'/>
+    </b:includable>
+  </b:widget>
+</b:section>

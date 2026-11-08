@@ -1,0 +1,465 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>:root{--jt-border-light:#E6E6E6;--jt-archive-bg:#fff;--bs-body-bg:#fff;--bs-body-color:#2b2b2b}/*
+-----------------------------------------------
+Red Atlas News: brand layer on top of JetTheme Core 2.9 (www.jettheme.com)
+-----------------------------------------------
+*/
+:root {
+--ra-red: #C8102E;
+--ra-red-dark: #9B0D23;
+--ra-ink: #111111;
+--ra-strip-bg: #FFFFFF;
+}
+.dark-mode {
+--jt-header-bg: #8E0B1F;
+--jt-header-color: #FFFFFF;
+--jt-header-border: #6E0818;
+--jt-nav-color: #FFFFFF;
+--jt-nav-hover: #FFFFFF;
+--jt-nav-selected: #FFFFFF;
+--ra-ink: #F2F2F2;
+--ra-strip-bg: hsl(210, 11%, 13%);
+}
+
+/* Header */
+#header {
+border-bottom: 3px solid #111111;
+}
+#header-main,
+#header .logo-wrap {
+display: flex;
+align-items: center;
+}
+#header .navbar-brand {
+padding: 8px 0;
+}
+#header .navbar-brand svg {
+display: block;
+width: 100%;
+height: auto;
+}
+#navbar .navbar-nav > .menu-item > .nav-link {
+font-size: 14px;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: .05em;
+}
+@media (min-width: 992px) {
+#navbar .navbar-nav > .menu-item:hover > .nav-link,
+#navbar .navbar-nav > .menu-item > .nav-link.active {
+box-shadow: inset 0 -3px 0 #FFFFFF;
+}
+}
+
+/* Market ticker (TradingView) */
+#ra-markets {
+background: var(--ra-strip-bg);
+border-bottom: 1px solid var(--jt-border-light);
+min-height: 60px;
+overflow: hidden;
+}
+
+/* Breaking news bar */
+#ra-breaking {
+background: var(--ra-strip-bg);
+border-bottom: 1px solid var(--jt-border-light);
+font-size: 14px;
+}
+#ra-breaking[hidden] {
+display: none;
+}
+.ra-breaking-label {
+background: var(--ra-red);
+color: #FFFFFF;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: .06em;
+font-size: 12px;
+padding: 4px 10px;
+margin-right: 12px;
+white-space: nowrap;
+}
+.ra-breaking-track {
+overflow: hidden;
+flex: 1;
+padding: 9px 0;
+-webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+}
+.ra-breaking-items {
+display: inline-flex;
+white-space: nowrap;
+animation: ra-scroll 60s linear infinite;
+}
+.ra-breaking-track:hover .ra-breaking-items {
+animation-play-state: paused;
+}
+.ra-breaking-items a {
+color: var(--ra-ink);
+font-weight: 600;
+padding-right: 40px;
+}
+.ra-breaking-items a:before {
+content: "";
+display: inline-block;
+width: 6px;
+height: 6px;
+border-radius: 50%;
+background: var(--ra-red);
+margin-right: 10px;
+vertical-align: middle;
+}
+.ra-breaking-items a:hover {
+color: var(--ra-red);
+}
+@keyframes ra-scroll {
+from { transform: translateX(0); }
+to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+.ra-breaking-items { animation: none; }
+}
+
+/* Headlines */
+.entry-title {
+font-weight: 800;
+line-height: 1.15;
+letter-spacing: -.01em;
+}
+.item-title {
+font-weight: 700;
+line-height: 1.25;
+}
+#primary .widget-title {
+font-weight: 800;
+color: var(--ra-ink);
+}
+
+/* Homepage section blocks */
+.ra-block {
+border-top: 3px solid var(--ra-ink);
+padding-top: 12px;
+}
+.ra-block-title {
+font-size: 22px;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: .02em;
+}
+.ra-block-title a {
+color: var(--ra-ink);
+}
+.ra-block-title a:before {
+content: "";
+display: inline-block;
+width: 10px;
+height: 18px;
+background: var(--ra-red);
+margin-right: 10px;
+vertical-align: -2px;
+}
+.ra-more {
+font-size: 13px;
+font-weight: 700;
+text-transform: uppercase;
+white-space: nowrap;
+}
+.ra-lead {
+color: var(--ra-ink);
+}
+.ra-lead:hover .ra-lead-title {
+color: var(--ra-red);
+}
+.ra-lead-title {
+font-size: 24px;
+font-weight: 800;
+line-height: 1.2;
+margin: 0 0 8px;
+}
+.ra-lead-sum {
+font-size: 15px;
+}
+.ra-list li {
+border-bottom: 1px solid var(--jt-border-light);
+padding: 10px 0;
+}
+.ra-list li:first-child {
+padding-top: 0;
+}
+.ra-list a {
+color: var(--ra-ink);
+font-weight: 700;
+line-height: 1.3;
+}
+.ra-list a:hover {
+color: var(--ra-red);
+}
+
+/* Gold desk widgets */
+.ra-gold {
+border: 1px solid var(--jt-border-light);
+border-top: 4px solid var(--ra-red);
+border-radius: 4px;
+padding: 16px;
+margin: 0 0 1.5rem;
+background: var(--jt-archive-bg);
+font-size: 16px;
+line-height: 1.4;
+}
+.ra-gold-home:empty {
+min-height: 230px;
+}
+.ra-gold-head {
+display: flex;
+flex-wrap: wrap;
+justify-content: space-between;
+gap: 8px;
+margin-bottom: 12px;
+}
+.ra-gold-label {
+display: block;
+font-size: 13px;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: .05em;
+color: var(--ra-red);
+}
+.ra-gold-big {
+display: block;
+font-size: 34px;
+font-weight: 800;
+color: var(--ra-ink);
+line-height: 1.15;
+}
+.ra-gold-sub,
+.ra-gold-upd {
+font-size: 13px;
+color: #777;
+}
+.ra-gold-upd {
+text-align: right;
+}
+.ra-live {
+background: var(--ra-red);
+color: #FFFFFF;
+font-weight: 800;
+font-size: 11px;
+padding: 1px 6px;
+border-radius: 2px;
+}
+.ra-gold-tools {
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+gap: 8px 16px;
+margin-bottom: 12px;
+font-size: 14px;
+}
+.ra-gold-tools select {
+border: 1px solid var(--jt-border-light);
+background: var(--bs-body-bg);
+color: var(--bs-body-color);
+padding: 4px 8px;
+border-radius: 4px;
+}
+.ra-gold-more {
+font-weight: 700;
+}
+.ra-gold-scroll {
+overflow-x: auto;
+}
+.ra-gold-table {
+width: 100%;
+border-collapse: collapse;
+font-size: 15px;
+margin: 0 0 1rem;
+}
+.ra-gold-table th,
+.ra-gold-table td {
+padding: 8px 10px;
+border-bottom: 1px solid var(--jt-border-light);
+text-align: right;
+white-space: nowrap;
+}
+.ra-gold-table th:first-child {
+text-align: left;
+}
+.ra-gold-table thead th {
+background: var(--ra-ink);
+color: var(--bs-body-bg);
+font-size: 13px;
+text-transform: uppercase;
+}
+.ra-gold .ra-gold-table {
+margin: 0;
+}
+.ra-gold-links {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+gap: 8px;
+margin: 0 0 1rem;
+}
+.ra-gold-links a {
+border: 1px solid var(--jt-border-light);
+border-left: 3px solid var(--ra-red);
+padding: 8px 10px;
+color: var(--ra-ink);
+font-weight: 600;
+font-size: 15px;
+}
+.ra-gold-links a small {
+color: #777;
+font-weight: 400;
+}
+.ra-gold-cta {
+font-weight: 700;
+font-size: 14px;
+margin-top: -0.75rem;
+}
+.ra-gold-note {
+font-size: 13px;
+color: #777;
+}
+
+/* Article body readability */
+#post-body {
+font-size: 18px;
+line-height: 1.75;
+}
+#post-body h2 {
+margin-top: 2rem;
+font-weight: 800;
+}
+#post-body img {
+border-radius: 4px;
+}
+
+body{font:18px/1.7 system-ui;max-width:860px;margin:auto;padding:16px} a{color:#C8102E}</style></head><body>
+<h2>HOMEPAGE CARD (auto-detect)</h2><div class="ra-gold ra-gold-home" data-country="auto" data-metal="XAU"></div>
+<hr><h1>Gold Price Today (hub)</h1><p>Track the <strong>live gold price today</strong> in your own currency. The table below detects your country automatically, and you can switch to any of 29 countries. As of November 7, 2026, 20:02 UTC, <strong>spot gold is $4,072.10 per ounce</strong> and spot silver is $52.07.</p>
+<div class="ra-gold" data-country="auto" data-metal="XAU"><div class="ra-gold-head"><div><span class="ra-gold-label">Gold price in USA today</span><strong class="ra-gold-big">$4,068</strong><span class="ra-gold-sub">1 Ounce, 24K &middot; USD</span></div><div class="ra-gold-upd">Updated November 7, 2026, 20:02 UTC<br/>Spot gold $4,072.10/oz</div></div><div class="ra-gold-scroll"><table class="ra-gold-table"><thead><tr><th>Purity</th><th>1 Ounce</th><th>1 Gram</th><th>1 Kilogram</th></tr></thead><tbody><tr><th>24K</th><td>$4,068</td><td>$130.79</td><td>$130,790</td></tr><tr><th>22K</th><td>$3,733</td><td>$120.02</td><td>$120,015</td></tr><tr><th>18K</th><td>$3,054</td><td>$98.19</td><td>$98,191</td></tr><tr><th>14K</th><td>$2,382</td><td>$76.59</td><td>$76,589</td></tr></tbody></table></div></div>
+<h2>Gold price today in US dollars</h2>
+<div class="ra-gold-scroll"><table class="ra-gold-table"><thead><tr><th>Purity</th><th>Per Gram</th><th>Per Ounce</th><th>Per Kilogram</th></tr></thead><tbody><tr><th>24K</th><td>$130.79</td><td>$4,068</td><td>$130,790</td></tr><tr><th>22K</th><td>$120.02</td><td>$3,733</td><td>$120,015</td></tr><tr><th>21K</th><td>$114.56</td><td>$3,563</td><td>$114,556</td></tr><tr><th>18K</th><td>$98.19</td><td>$3,054</td><td>$98,191</td></tr><tr><th>14K</th><td>$76.59</td><td>$2,382</td><td>$76,589</td></tr></tbody></table></div>
+<h2>Gold price today by country</h2>
+<p>Choose your country for local units such as tola, sovereign or tael, popular purities and market notes:</p>
+<div class="ra-gold-links"><a href="/p/gold-price-in-usa.html">Gold price in USA <small>USD</small></a><a href="/p/gold-price-in-uk.html">Gold price in UK <small>GBP</small></a><a href="/p/gold-price-in-canada.html">Gold price in Canada <small>CAD</small></a><a href="/p/gold-price-in-australia.html">Gold price in Australia <small>AUD</small></a><a href="/p/gold-price-in-new-zealand.html">Gold price in New Zealand <small>NZD</small></a><a href="/p/gold-price-in-india.html">Gold price in India <small>INR</small></a><a href="/p/gold-price-in-pakistan.html">Gold price in Pakistan <small>PKR</small></a><a href="/p/gold-price-in-bangladesh.html">Gold price in Bangladesh <small>BDT</small></a><a href="/p/gold-price-in-nepal.html">Gold price in Nepal <small>NPR</small></a><a href="/p/gold-price-in-sri-lanka.html">Gold price in Sri Lanka <small>LKR</small></a><a href="/p/gold-price-in-uae.html">Gold price in UAE <small>AED</small></a><a href="/p/gold-price-in-saudi-arabia.html">Gold price in Saudi Arabia <small>SAR</small></a><a href="/p/gold-price-in-qatar.html">Gold price in Qatar <small>QAR</small></a><a href="/p/gold-price-in-kuwait.html">Gold price in Kuwait <small>KWD</small></a><a href="/p/gold-price-in-oman.html">Gold price in Oman <small>OMR</small></a><a href="/p/gold-price-in-bahrain.html">Gold price in Bahrain <small>BHD</small></a><a href="/p/gold-price-in-egypt.html">Gold price in Egypt <small>EGP</small></a><a href="/p/gold-price-in-jordan.html">Gold price in Jordan <small>JOD</small></a><a href="/p/gold-price-in-turkey.html">Gold price in Turkey <small>TRY</small></a><a href="/p/gold-price-in-malaysia.html">Gold price in Malaysia <small>MYR</small></a><a href="/p/gold-price-in-singapore.html">Gold price in Singapore <small>SGD</small></a><a href="/p/gold-price-in-philippines.html">Gold price in Philippines <small>PHP</small></a><a href="/p/gold-price-in-indonesia.html">Gold price in Indonesia <small>IDR</small></a><a href="/p/gold-price-in-hong-kong.html">Gold price in Hong Kong <small>HKD</small></a><a href="/p/gold-price-in-south-africa.html">Gold price in South Africa <small>ZAR</small></a><a href="/p/gold-price-in-nigeria.html">Gold price in Nigeria <small>NGN</small></a><a href="/p/gold-price-in-kenya.html">Gold price in Kenya <small>KES</small></a><a href="/p/gold-price-in-ghana.html">Gold price in Ghana <small>GHS</small></a><a href="/p/gold-price-in-europe.html">Gold price in Europe <small>EUR</small></a></div>
+<h2>How the gold price is calculated</h2>
+<p>Gold is traded worldwide in US dollars per troy ounce (31.1035 grams). To get a local price, the spot price is divided by 31.1035 to find the price per gram, converted at the live exchange rate, and multiplied by the purity of each karat. Every price on this page is cross-checked against an independent market source.</p>
+<h2>What moves gold prices</h2>
+<ul><li><strong>Interest rates:</strong> higher rates tend to weigh on gold, which pays no interest.</li>
+<li><strong>The US dollar:</strong> a weaker dollar usually lifts gold prices.</li>
+<li><strong>Inflation and uncertainty:</strong> investors often buy gold as a store of value in turbulent times.</li>
+<li><strong>Central banks:</strong> large purchases by central banks support demand.</li></ul>
+<p>Read the latest <a href="/search/label/Gold?max-results=12">gold news and analysis</a> or check the <a href="/p/silver-price-today.html">silver price today</a>.</p>
+<h2>Frequently Asked Questions</h2><h3>What is the gold price today?</h3><p>As of November 7, 2026, 20:02 UTC, the spot price of gold is $4,072.10 per troy ounce, or about $130.92 per gram for 24K gold.</p><h3>What is the difference between 24K, 22K and 18K gold?</h3><p>Karats measure purity. 24K is 99.9% pure gold, 22K is 91.67%, 21K is 87.5% and 18K is 75%. Lower karats are mixed with other metals, which makes them harder and cheaper per gram.</p><h3>What is a tola, a sovereign and a tael?</h3><p>They are traditional gold weights. A tola is 11.66 grams (South Asia and the Gulf), a sovereign is 8 grams (South India and Sri Lanka), and a tael is about 37.43 grams (Hong Kong).</p><h3>Why is the price in gold shops higher?</h3><p>Shops add making charges, a dealer premium and local taxes on top of the value of the gold itself.</p><h3>What moves the price of gold?</h3><p>Interest rates, the US dollar, inflation, central bank buying, geopolitical risk and investor demand are the biggest drivers of the gold price.</p>
+<p class="ra-gold-note">Prices are based on the international spot price and live exchange rates, refreshed automatically. Jewellers and dealers add making charges, premiums and local taxes, so shop prices are usually higher. For information only, not investment advice. See our <a href="/p/disclaimer.html">Disclaimer</a>.</p><hr><h1>India page</h1><p>Here is the <strong>live gold price in India today</strong> in INR, for 24K, 22K, 18K gold per 10 grams, 1 gram, 1 sovereign (8 g). As of November 7, 2026, 20:02 UTC, <strong>24K gold costs ₹12,312 per gram</strong> in India, while the international spot price is $4,072.10 per ounce.</p>
+<div class="ra-gold" data-country="IN" data-metal="XAU"><div class="ra-gold-head"><div><span class="ra-gold-label">Gold price in India today</span><strong class="ra-gold-big">₹1,23,125</strong><span class="ra-gold-sub">10 Grams, 24K &middot; INR</span></div><div class="ra-gold-upd">Updated November 7, 2026, 20:02 UTC<br/>Spot gold $4,072.10/oz</div></div><div class="ra-gold-scroll"><table class="ra-gold-table"><thead><tr><th>Purity</th><th>10 Grams</th><th>1 Gram</th><th>1 Sovereign (8 g)</th></tr></thead><tbody><tr><th>24K</th><td>₹1,23,125</td><td>₹12,312</td><td>₹98,500</td></tr><tr><th>22K</th><td>₹1,12,981</td><td>₹11,298</td><td>₹90,385</td></tr><tr><th>18K</th><td>₹92,436</td><td>₹9,244</td><td>₹73,949</td></tr></tbody></table></div></div>
+<h2>Gold rate in India today by purity</h2>
+<p>The purer the gold, the higher the price. Today's price per gram for each purity in India:</p>
+<ul><li><strong>24K</strong> (99.9% pure gold): ₹12,312 per gram</li><li><strong>22K</strong> (91.7% pure gold): ₹11,298 per gram</li><li><strong>18K</strong> (75.0% pure gold): ₹9,244 per gram</li></ul>
+<h2>About the gold market in India</h2>
+<p>India is one of the world&#x27;s largest gold consumers. Gold rates are usually quoted per 10 grams, 22K is the most popular purity for jewellery, and in South India gold is often counted in sovereigns (8 grams). Jewellery buyers also pay 3% GST plus making charges.</p>
+<h2>How we calculate today's gold price in India</h2>
+<p>Our price is built from two live numbers: the international spot price of gold ($4,072.10 per troy ounce right now) and the US dollar to INR exchange rate (94.1392). One troy ounce is 31.1035 grams, so 24K gold costs about $130.92 per gram in US dollars before conversion. Every price is cross-checked against a second, independent market source before it is published.</p>
+<h2>Silver price in India today</h2>
+<div class="ra-gold" data-country="IN" data-metal="XAG"><div class="ra-gold-head"><div><span class="ra-gold-label">Silver price in India today</span><strong class="ra-gold-big">₹157.44</strong><span class="ra-gold-sub">per gram, 999 fine &middot; INR</span></div><div class="ra-gold-upd">Updated November 7, 2026, 20:02 UTC<br/>Spot silver $52.07/oz</div></div><div class="ra-gold-scroll"><table class="ra-gold-table"><thead><tr><th>Purity</th><th>1 Gram</th><th>1 Ounce</th><th>1 Kilogram</th></tr></thead><tbody><tr><th>999 Fine</th><td>₹157.44</td><td>₹4,897</td><td>₹1,57,443</td></tr><tr><th>925 Sterling</th><td>₹145.78</td><td>₹4,534</td><td>₹1,45,780</td></tr></tbody></table></div></div>
+<h2>Gold price in nearby countries</h2>
+<div class="ra-gold-links"><a href="/p/gold-price-in-pakistan.html">Gold price in Pakistan <small>PKR</small></a><a href="/p/gold-price-in-bangladesh.html">Gold price in Bangladesh <small>BDT</small></a><a href="/p/gold-price-in-nepal.html">Gold price in Nepal <small>NPR</small></a><a href="/p/gold-price-in-sri-lanka.html">Gold price in Sri Lanka <small>LKR</small></a></div>
+<p>See the <a href="/p/gold-price-today.html">live gold price in every country</a> or follow the latest <a href="/search/label/Gold?max-results=12">gold market news</a>.</p>
+<h2>Frequently Asked Questions</h2><h3>What is the gold price in India today?</h3><p>As of November 7, 2026, 20:02 UTC, 24K gold in India is about ₹12,312 per gram and ₹3,82,961 per ounce, based on the international spot price.</p><h3>What is the 22K gold rate in India today?</h3><p>22K gold is about ₹11,298 per gram today in India.</p><h3>Why is the jeweller&#x27;s price in India higher than this price?</h3><p>This page shows the value of the gold itself. Shops add making charges, a dealer premium and any local taxes, which is why jewellery costs more than the spot-based price.</p><h3>How often is this gold price updated?</h3><p>The price updates automatically from the live international gold market and current exchange rates, so it changes throughout the trading day.</p><h3>How is the gold price in India calculated?</h3><p>We take the spot price of gold in US dollars per troy ounce, divide by 31.1035 to get the price per gram, convert it into INR at the live exchange rate, and multiply by the purity of each karat.</p>
+<p class="ra-gold-note">Prices are based on the international spot price and live exchange rates, refreshed automatically. Jewellers and dealers add making charges, premiums and local taxes, so shop prices are usually higher. For information only, not investment advice. See our <a href="/p/disclaimer.html">Disclaimer</a>.</p>
+<script>/* ===== Red Atlas gold desk: live prices in the visitor's currency ===== */
+var RA_GOLD = {"oz":31.1034768,"units":{"gram":["1 Gram",1.0],"10g":["10 Grams",10.0],"tola":["1 Tola",11.6638],"sovereign":["1 Sovereign (8 g)",8.0],"tael":["1 Tael",37.429],"ounce":["1 Ounce",31.1034768],"kg":["1 Kilogram",1000.0]},"karats":{"24K":0.999,"22K":0.9167,"21K":0.875,"18K":0.75,"14K":0.585},"silver":[["999 Fine",0.999],["925 Sterling",0.925]],"countries":[{"code":"US","short":"USA","currency":"USD","symbol":"$","units":["ounce","gram","kg"],"karats":["24K","22K","18K","14K"],"zones":["America/New_York","America/Chicago","America/Denver","America/Los_Angeles","America/Phoenix","America/Anchorage","Pacific/Honolulu","America/Detroit","America/Indiana/Indianapolis"]},{"code":"GB","short":"UK","currency":"GBP","symbol":"£","units":["gram","ounce","kg"],"karats":["24K","22K","18K","14K"],"zones":["Europe/London"]},{"code":"CA","short":"Canada","currency":"CAD","symbol":"C$","units":["ounce","gram","kg"],"karats":["24K","22K","18K","14K"],"zones":["America/Toronto","America/Vancouver","America/Edmonton","America/Winnipeg","America/Halifax","America/Regina","America/St_Johns"]},{"code":"AU","short":"Australia","currency":"AUD","symbol":"A$","units":["ounce","gram","kg"],"karats":["24K","22K","18K","14K"],"zones":["Australia/Sydney","Australia/Melbourne","Australia/Brisbane","Australia/Perth","Australia/Adelaide","Australia/Hobart","Australia/Darwin"]},{"code":"NZ","short":"New Zealand","currency":"NZD","symbol":"NZ$","units":["ounce","gram","kg"],"karats":["24K","22K","18K","14K"],"zones":["Pacific/Auckland"]},{"code":"IN","short":"India","currency":"INR","symbol":"₹","units":["10g","gram","sovereign"],"karats":["24K","22K","18K"],"zones":["Asia/Kolkata","Asia/Calcutta"]},{"code":"PK","short":"Pakistan","currency":"PKR","symbol":"Rs","units":["tola","10g","gram"],"karats":["24K","22K","21K","18K"],"zones":["Asia/Karachi"]},{"code":"BD","short":"Bangladesh","currency":"BDT","symbol":"৳","units":["tola","gram"],"karats":["22K","21K","18K"],"zones":["Asia/Dhaka"]},{"code":"NP","short":"Nepal","currency":"NPR","symbol":"Rs","units":["tola","10g","gram"],"karats":["24K","22K"],"zones":["Asia/Kathmandu","Asia/Katmandu"]},{"code":"LK","short":"Sri Lanka","currency":"LKR","symbol":"Rs","units":["sovereign","gram"],"karats":["24K","22K"],"zones":["Asia/Colombo"]},{"code":"AE","short":"UAE","currency":"AED","symbol":"AED","units":["gram","tola","ounce"],"karats":["24K","22K","21K","18K"],"zones":["Asia/Dubai"]},{"code":"SA","short":"Saudi Arabia","currency":"SAR","symbol":"SAR","units":["gram","ounce","kg"],"karats":["24K","22K","21K","18K"],"zones":["Asia/Riyadh"]},{"code":"QA","short":"Qatar","currency":"QAR","symbol":"QAR","units":["gram","ounce"],"karats":["24K","22K","21K","18K"],"zones":["Asia/Qatar"]},{"code":"KW","short":"Kuwait","currency":"KWD","symbol":"KWD","units":["gram","ounce"],"karats":["24K","22K","21K","18K"],"zones":["Asia/Kuwait"]},{"code":"OM","short":"Oman","currency":"OMR","symbol":"OMR","units":["gram","ounce"],"karats":["24K","22K","21K","18K"],"zones":["Asia/Muscat"]},{"code":"BH","short":"Bahrain","currency":"BHD","symbol":"BHD","units":["gram","ounce"],"karats":["24K","22K","21K","18K"],"zones":["Asia/Bahrain"]},{"code":"EG","short":"Egypt","currency":"EGP","symbol":"EGP","units":["gram","ounce"],"karats":["24K","21K","18K"],"zones":["Africa/Cairo"]},{"code":"JO","short":"Jordan","currency":"JOD","symbol":"JOD","units":["gram","ounce"],"karats":["24K","21K","18K"],"zones":["Asia/Amman"]},{"code":"TR","short":"Turkey","currency":"TRY","symbol":"₺","units":["gram","ounce"],"karats":["24K","22K","18K","14K"],"zones":["Europe/Istanbul"]},{"code":"MY","short":"Malaysia","currency":"MYR","symbol":"RM","units":["gram","ounce"],"karats":["24K","22K","18K"],"zones":["Asia/Kuala_Lumpur"]},{"code":"SG","short":"Singapore","currency":"SGD","symbol":"S$","units":["gram","ounce","kg"],"karats":["24K","22K","18K"],"zones":["Asia/Singapore"]},{"code":"PH","short":"Philippines","currency":"PHP","symbol":"₱","units":["gram","ounce"],"karats":["24K","22K","18K","14K"],"zones":["Asia/Manila"]},{"code":"ID","short":"Indonesia","currency":"IDR","symbol":"Rp","units":["gram","ounce"],"karats":["24K","22K","18K"],"zones":["Asia/Jakarta","Asia/Makassar","Asia/Jayapura","Asia/Pontianak"]},{"code":"HK","short":"Hong Kong","currency":"HKD","symbol":"HK$","units":["tael","gram","ounce"],"karats":["24K","22K","18K"],"zones":["Asia/Hong_Kong"]},{"code":"ZA","short":"South Africa","currency":"ZAR","symbol":"R","units":["ounce","gram","kg"],"karats":["24K","22K","18K"],"zones":["Africa/Johannesburg"]},{"code":"NG","short":"Nigeria","currency":"NGN","symbol":"₦","units":["gram","ounce"],"karats":["24K","22K","18K"],"zones":["Africa/Lagos"]},{"code":"KE","short":"Kenya","currency":"KES","symbol":"KSh","units":["gram","ounce"],"karats":["24K","22K","18K"],"zones":["Africa/Nairobi"]},{"code":"GH","short":"Ghana","currency":"GHS","symbol":"GH₵","units":["gram","ounce"],"karats":["24K","22K","18K"],"zones":["Africa/Accra"]},{"code":"EU","short":"Europe","currency":"EUR","symbol":"€","units":["gram","ounce","kg"],"karats":["24K","22K","18K","14K"],"zones":["Europe/Berlin","Europe/Paris","Europe/Madrid","Europe/Rome","Europe/Amsterdam","Europe/Brussels","Europe/Vienna","Europe/Dublin","Europe/Lisbon","Europe/Athens","Europe/Helsinki"]}],"pageFor":{"US":"/p/gold-price-in-usa.html","GB":"/p/gold-price-in-uk.html","CA":"/p/gold-price-in-canada.html","AU":"/p/gold-price-in-australia.html","NZ":"/p/gold-price-in-new-zealand.html","IN":"/p/gold-price-in-india.html","PK":"/p/gold-price-in-pakistan.html","BD":"/p/gold-price-in-bangladesh.html","NP":"/p/gold-price-in-nepal.html","LK":"/p/gold-price-in-sri-lanka.html","AE":"/p/gold-price-in-uae.html","SA":"/p/gold-price-in-saudi-arabia.html","QA":"/p/gold-price-in-qatar.html","KW":"/p/gold-price-in-kuwait.html","OM":"/p/gold-price-in-oman.html","BH":"/p/gold-price-in-bahrain.html","EG":"/p/gold-price-in-egypt.html","JO":"/p/gold-price-in-jordan.html","TR":"/p/gold-price-in-turkey.html","MY":"/p/gold-price-in-malaysia.html","SG":"/p/gold-price-in-singapore.html","PH":"/p/gold-price-in-philippines.html","ID":"/p/gold-price-in-indonesia.html","HK":"/p/gold-price-in-hong-kong.html","ZA":"/p/gold-price-in-south-africa.html","NG":"/p/gold-price-in-nigeria.html","KE":"/p/gold-price-in-kenya.html","GH":"/p/gold-price-in-ghana.html","EU":"/p/gold-price-in-europe.html"}};
+var RA_GOLD_BY = {};
+RA_GOLD.countries.forEach(function (c) { RA_GOLD_BY[c.code] = c; });
+
+/* Same rules as money() in engine/gold_pages.py */
+function raFmt(v, c) {
+  var d = v >= 1000 ? 0 : 2;
+  var indian = ["INR", "NPR", "PKR", "BDT", "LKR"].indexOf(c.currency) >= 0;
+  var s = v.toLocaleString(indian ? "en-IN" : "en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+  return c.symbol + (c.symbol.length > 1 && /^[A-Za-z]+$/.test(c.symbol) ? " " : "") + s;
+}
+
+function raGoldData() {
+  try {
+    var cached = JSON.parse(sessionStorage.getItem("raGold") || "null");
+    if (cached && Date.now() - cached.t < 600000) return Promise.resolve(cached);
+  } catch (e) {}
+  var j = function (u) { return fetch(u).then(function (r) { return r.json(); }); };
+  return Promise.all([
+    j("https://api.gold-api.com/price/XAU"),
+    j("https://api.gold-api.com/price/XAG"),
+    j("https://open.er-api.com/v6/latest/USD")
+  ]).then(function (a) {
+    var d = { t: Date.now(), xau: +a[0].price, xag: +a[1].price, fx: a[2].rates };
+    if (!(d.xau > 100 && d.xag > 1 && d.fx && d.fx.EUR)) throw new Error("bad data");
+    try { sessionStorage.setItem("raGold", JSON.stringify(d)); } catch (e) {}
+    return d;
+  });
+}
+
+function raDetectCountry() {
+  try {
+    var saved = localStorage.getItem("raGoldCountry");
+    if (saved && RA_GOLD_BY[saved]) return saved;
+  } catch (e) {}
+  var tz = "";
+  try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
+  for (var i = 0; i < RA_GOLD.countries.length; i++) {
+    if (RA_GOLD.countries[i].zones.indexOf(tz) >= 0) return RA_GOLD.countries[i].code;
+  }
+  var m = (navigator.language || "").match(/-([A-Z]{2})$/);
+  return m && RA_GOLD_BY[m[1]] ? m[1] : "US";
+}
+
+function raGoldRender(el, d) {
+  var auto = el.getAttribute("data-country") === "auto";
+  var c = RA_GOLD_BY[auto ? (el.getAttribute("data-current") || raDetectCountry()) : el.getAttribute("data-country")];
+  var rate = d.fx[c.currency];
+  if (!c || !rate) return;
+  var silver = el.getAttribute("data-metal") === "XAG";
+  var gram = (silver ? d.xag : d.xau) / RA_GOLD.oz * rate;
+  var rows = silver ? RA_GOLD.silver : c.karats.map(function (k) { return [k, RA_GOLD.karats[k]]; });
+  var units = silver ? ["gram", "ounce", "kg"] : c.units;
+  var main = units[0];
+  var head = units.map(function (u) { return "<th>" + RA_GOLD.units[u][0] + "</th>"; }).join("");
+  var body = rows.map(function (r) {
+    return "<tr><th>" + r[0] + "</th>" + units.map(function (u) {
+      return "<td>" + raFmt(gram * r[1] * RA_GOLD.units[u][1], c) + "</td>";
+    }).join("") + "</tr>";
+  }).join("");
+  var time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  var pick = "";
+  if (auto) {
+    pick = "<label class='ra-gold-pick'>Country: <select aria-label='Choose your country'>" +
+      RA_GOLD.countries.map(function (x) {
+        return "<option value='" + x.code + "'" + (x.code === c.code ? " selected" : "") + ">" + x.short + " (" + x.currency + ")</option>";
+      }).join("") + "</select></label> <a class='ra-gold-more' href='" + RA_GOLD.pageFor[c.code] + "'>Full prices for " + c.short + " ›</a>";
+  }
+  el.setAttribute("data-current", c.code);
+  el.innerHTML =
+    "<div class='ra-gold-head'><div><span class='ra-gold-label'>" + (silver ? "Silver" : "Gold") + " price in " + c.short + " today</span>" +
+    "<strong class='ra-gold-big'>" + raFmt(gram * rows[0][1] * RA_GOLD.units[main][1], c) + "</strong>" +
+    "<span class='ra-gold-sub'>" + RA_GOLD.units[main][0] + ", " + rows[0][0] + " &middot; " + c.currency + "</span></div>" +
+    "<div class='ra-gold-upd'><span class='ra-live'>LIVE</span> " + time + "<br/>Spot " + (silver ? "silver" : "gold") + " $" +
+    (silver ? d.xag : d.xau).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "/oz</div></div>" +
+    (auto ? "<div class='ra-gold-tools'>" + pick + "</div>" : "") +
+    "<div class='ra-gold-scroll'><table class='ra-gold-table'><thead><tr><th>Purity</th>" + head + "</tr></thead><tbody>" + body + "</tbody></table></div>";
+  var sel = el.querySelector("select");
+  if (sel) sel.onchange = function () {
+    try { localStorage.setItem("raGoldCountry", sel.value); } catch (e) {}
+    el.setAttribute("data-current", sel.value);
+    raGoldRender(el, d);
+  };
+}
+
+function raGold() {
+  var els = document.querySelectorAll(".ra-gold");
+  if (!els.length || !window.fetch) return;
+  raGoldData().then(function (d) {
+    for (var i = 0; i < els.length; i++) raGoldRender(els[i], d);
+  }).catch(function () { /* keep the prices already in the page */ });
+}
+raGold();</script></body></html>

@@ -1,0 +1,15 @@
+<b:section class='pb-2' cond='data:view.isHomepage' id='home-sections' showaddelement='yes'>
+  <b:widget id='HTML40' locked='false' title='#Homepage Sections' type='HTML' visible='true'>
+    <b:widget-settings>
+      <b:widget-setting name='content'><![CDATA[<div class="ra-gold ra-gold-home" data-country="auto" data-metal="XAU"></div>
+<p class="ra-gold-cta"><a href="/p/gold-price-today.html">Gold prices in 29 countries &rsaquo;</a> &middot; <a href="/p/silver-price-today.html">Silver price today &rsaquo;</a></p>
+<div class="custom-posts visually-hidden" data-label="World" data-title="World" data-items="5" data-func="ra_block_temp"></div>
+<div class="custom-posts visually-hidden" data-label="Gold" data-title="Gold" data-items="5" data-func="ra_block_temp"></div>
+<div class="custom-posts visually-hidden" data-label="Markets" data-title="Markets" data-items="5" data-func="ra_block_temp"></div>
+<div class="custom-posts visually-hidden" data-label="Economy" data-title="Economy" data-items="5" data-func="ra_block_temp"></div>]]></b:widget-setting>
+    </b:widget-settings>
+    <b:includable id='main'>
+      <b:include name='JetHtml'/>
+    </b:includable>
+  </b:widget>
+</b:section>

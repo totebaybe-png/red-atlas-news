@@ -1,0 +1,7 @@
+requests
+feedparser
+trafilatura
+pillow
+python-dotenv
+google-auth
+google-auth-oauthlib

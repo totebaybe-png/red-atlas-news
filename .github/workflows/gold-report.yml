@@ -1,0 +1,53 @@
+name: Red Atlas Daily Gold Reports (Morning & Evening)
+
+on:
+  schedule:
+    - cron: "30 6 * * *"
+    - cron: "30 18 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: red-atlas-repo-sync
+  cancel-in-progress: false
+
+jobs:
+  publish-gold-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write and publish Morning/Evening Gold Report
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
+          GEMINI_API_KEY_3: ${{ secrets.GEMINI_API_KEY_3 }}
+          GEMINI_API_KEY_4: ${{ secrets.GEMINI_API_KEY_4 }}
+          GEMINI_API_KEY_5: ${{ secrets.GEMINI_API_KEY_5 }}
+          GEMINI_API_KEY_6: ${{ secrets.GEMINI_API_KEY_6 }}
+          GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
+          BLOGGER_TOKEN: ${{ secrets.BLOGGER_TOKEN }}
+        run: python -m engine.gold_report --session auto --publish
+
+      - name: Save published report and cover image
+        run: |
+          git config user.name "Red Atlas Bot"
+          git config user.email "bot@redatlasnews.com"
+          git add data/gold.json data/published_posts.json output/
+          if ! git diff --cached --quiet; then
+            git commit -m "gold-report: automated daily edition $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git pull --rebase --autostash origin main
+            git push origin main
+          fi
