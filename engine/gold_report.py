@@ -173,7 +173,12 @@ def main():
     parser.add_argument("--session", choices=["morning", "evening", "auto"], default="auto")
     parser.add_argument("--publish", action="store_true")
     args = parser.parse_args()
-    generate_report(session=args.session, publish_to_blog=args.publish)
+    from .blogger import PublishBlocked
+
+    try:
+        generate_report(session=args.session, publish_to_blog=args.publish)
+    except PublishBlocked as e:
+        print(f"::warning::{e}. The report was saved locally but not published.")
 
 
 if __name__ == "__main__":

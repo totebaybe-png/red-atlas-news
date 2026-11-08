@@ -136,6 +136,7 @@ def main():
 
     results = []
     failures = 0
+    blocked = False
     for story in stories:
         if len(results) >= args.count:
             break
@@ -148,6 +149,7 @@ def main():
             config.DATA_DIR.mkdir(parents=True, exist_ok=True)
             BLOCK_FILE.write_text(json.dumps({"since": dt.datetime.utcnow().isoformat(), "reason": str(e)[:300]}),
                                   encoding="utf-8")
+            blocked = True
             break
         except Exception as e:  # one bad story must not stop the newsroom
             print(f"   failed: {type(e).__name__}: {e}")
@@ -168,7 +170,8 @@ def main():
 
     write_index(out_root, results)
     print(f"\nDone: {len(results)} articles in {time.time() - started:.0f}s -> {out_root / 'index.html'}")
-    return 0 if results else 1
+    # A Blogger block is handled (paused and saved), so it is not a failed run
+    return 0 if results or blocked else 1
 
 
 if __name__ == "__main__":

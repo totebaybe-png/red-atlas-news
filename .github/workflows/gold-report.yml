@@ -45,6 +45,7 @@ jobs:
         run: python -m engine.gold_report --session auto --publish
 
       - name: Save published report and cover image
+        if: always()
         run: |
           git config user.name "Red Atlas Bot"
           git config user.email "bot@redatlasnews.com"
