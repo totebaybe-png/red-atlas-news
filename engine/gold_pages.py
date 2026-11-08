@@ -161,10 +161,8 @@ def calculator(c):
     """Filled in by raCalcRender() in gold.js; the text is what search engines and no-JS readers see."""
     return (f'<div class="ra-gold-calc" data-country="{c["code"]}"><p>Enter a weight and purity to calculate the '
             f'value of your gold in {c["currency"]} at today\'s live price.</p></div>'
-            '<p class="ra-gold-note">For additional financial, percentage and unit conversions, use '
-            '<a href="https://calculatoranubis.com/" rel="noopener" target="_blank">Anubis Calculator</a>, '
-            'or manage documents and charts with <a href="https://anubispdf.com/" rel="noopener" target="_blank">Anubis PDF</a> '
-            'and <a href="https://image.anubispdf.com/" rel="noopener" target="_blank">Anubis Image Tools</a>.</p>')
+            '<p class="ra-gold-note">For additional financial, investment and percentage conversions, explore '
+            '<a href="https://calculatoranubis.com/" rel="noopener" target="_blank">Anubis Calculator</a>.</p>')
 
 
 def copy_sections(copy, part):

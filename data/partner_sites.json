@@ -2,22 +2,8 @@
   {
     "name": "Anubis Calculator",
     "url": "https://calculatoranubis.com/",
-    "description": "Free online financial, investment, percentage, and unit conversion calculators.",
+    "description": "Free online financial, currency, percentage and gold investment calculators.",
     "labels": ["Gold", "Markets", "Economy"],
-    "rel": "noopener"
-  },
-  {
-    "name": "Anubis PDF Tools",
-    "url": "https://anubispdf.com/",
-    "description": "Fast online PDF converter, document merger, compressor, and business document tools.",
-    "labels": ["Business", "World", "Economy"],
-    "rel": "noopener"
-  },
-  {
-    "name": "Anubis Image Tools",
-    "url": "https://image.anubispdf.com/",
-    "description": "Online image converter, compressor, resizer, and web optimization suite.",
-    "labels": ["Tech", "Business", "World"],
     "rel": "noopener"
   }
 ]

@@ -92,20 +92,19 @@ def _internal_and_partner_links(article):
     links.append((f'<a href="/search/label/{escape(label)}?max-results=12">More {escape(label)} News &amp; Analysis</a>',
                   f"Browse the latest {escape(label.lower())} reporting from {config.SITE_NAME}."))
 
-    # 5. Partner / Sister Websites Network (contextual matching + rotation across Anubis sites)
+    # 5. Contextual Financial Calculator (Only in Gold, Markets, and Economy sections)
     partner_items = []
-    all_partners = config.load_partner_sites()
-    matched_partners = [s for s in all_partners if not s.get("labels") or label in s.get("labels", [])]
-    chosen_partners = matched_partners or all_partners
-    for site in chosen_partners[:2]:
-        rel = site.get("rel", "noopener")
-        desc = site.get("description", "Partner publication and resource.")
-        partner_items.append((
-            f'<a href="{escape(site["url"])}" rel="{escape(rel)}" target="_blank">{escape(site["name"])}</a>',
-            escape(desc),
-        ))
+    if label in ("Gold", "Markets", "Economy") or any(w in text for w in ("gold", "bullion", "currency", "inflation", "interest rate")):
+        for site in config.load_partner_sites():
+            if site.get("name") and site.get("url"):
+                rel = site.get("rel", "noopener")
+                desc = site.get("description", "Financial and investment calculation tools.")
+                partner_items.append((
+                    f'<a href="{escape(site["url"])}" rel="{escape(rel)}" target="_blank">{escape(site["name"])}</a>',
+                    escape(desc),
+                ))
 
-    final_links = links[:5] + partner_items
+    final_links = links[:5] + partner_items[:1]
     items = "".join(f"<li><strong>{anchor}</strong> — {desc}</li>" for anchor, desc in final_links)
     return f"<h2>Related Coverage &amp; Market Tools</h2><ul>{items}</ul>"
 
