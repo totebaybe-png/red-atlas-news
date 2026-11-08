@@ -139,6 +139,8 @@ BOOST_WORDS = {
 MAX_STORY_AGE_HOURS = 18
 MIN_WORDS = 800
 MAX_SOURCE_CHARS = 7000
+# The writer needs enough real reporting to work from, or it starts padding/inventing
+MIN_SOURCE_WORDS = 800
 
 # Where cover cards are served from once the GitHub repo exists (jsDelivr CDN), e.g.
 # https://cdn.jsdelivr.net/gh/<user>/<repo>@main/output

@@ -32,9 +32,14 @@ DEFER = "defer"  # good story, but its section is full this run: try again next 
 
 def produce(story, gold, out_root, label_counts, label_cap, blog=None):
     docs = research.gather(story)
+    # Thin stories are not marked as seen: they can be written later, once more outlets cover them
     if len(docs) < 2:
-        print("   skipped: fewer than 2 readable sources")
-        return None
+        print("   waiting: fewer than 2 readable sources")
+        return DEFER
+    source_words = sum(len(d["text"].split()) for d in docs)
+    if source_words < config.MIN_SOURCE_WORDS:
+        print(f"   waiting: only {source_words} words of source material (need {config.MIN_SOURCE_WORDS})")
+        return DEFER
     story_plan = writer.plan(story, docs)
     if story_plan.get("skip"):
         print(f"   skipped by editor: {story_plan.get('angle', '')}")
