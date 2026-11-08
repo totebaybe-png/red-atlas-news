@@ -13,15 +13,55 @@ his her their they them he she we you i our your after while during just""".spli
 SEEN_FILE = config.DATA_DIR / "seen.json"
 
 
+def _root(word):
+    # Crude word root so "collision"/"collide", "trains"/"train" and "injured"/"injures" match
+    return word if len(word) <= 5 else word[:5]
+
+
 def tokens(text):
     # Strip accents so "Kraków" and "Krakow" match
     text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
     words = re.findall(r"[a-z0-9]+", text.lower())
-    return {w.rstrip("s") if len(w) > 4 else w for w in words if w not in STOP and len(w) > 2}
+    # Numbers ("88 injured", "5.7 quake") are strong fingerprints of one event, so keep short ones too
+    return {_root(w) for w in words if w not in STOP and (len(w) > 2 or (w.isdigit() and len(w) == 2))}
+
+
+def _core(c):
+    """Words that at least 40% of the group's headlines share: what the story is really about."""
+    counts = {}
+    for t in c["titles"]:
+        for w in t:
+            counts[w] = counts.get(w, 0) + 1
+    need = max(1, -(-len(c["titles"]) * 2 // 5))
+    return {w for w, n in counts.items() if n >= need}
+
+
+def _merge_similar(clusters):
+    """Second pass: join groups whose headlines describe the same event in different words."""
+    merged = True
+    while merged:
+        merged = False
+        cores = [_core(c) for c in clusters]
+        for i in range(len(clusters)):
+            for j in range(i + 1, len(clusters)):
+                shared = cores[i] & cores[j]
+                smaller = min(len(cores[i]), len(cores[j])) or 1
+                ratio = len(shared) / smaller
+                if (len(shared) >= 3 and ratio >= 0.5) or (len(shared) >= 4 and ratio >= 0.4):
+                    a, b = clusters[i], clusters[j]
+                    a["items"] += b["items"]
+                    a["tokens"] |= b["tokens"]
+                    a["titles"] += b["titles"]
+                    del clusters[j]
+                    merged = True
+                    break
+            if merged:
+                break
+    return clusters
 
 
 def cluster(items):
-    """Greedy grouping by headline word overlap."""
+    """Greedy grouping by headline word overlap, then a merge pass."""
     clusters = []
     for item in sorted(items, key=lambda i: i["published"], reverse=True):
         item_tokens = tokens(item["title"] + " " + item["summary"][:160])
@@ -29,16 +69,19 @@ def cluster(items):
         best, best_score = None, 0.0
         for c in clusters:
             inter = len(item_tokens & c["tokens"])
-            # Share of this headline's key words already in the group
-            score = len(title_tokens & c["tokens"]) / (len(title_tokens) or 1)
-            if inter >= 3 and score > best_score:
+            # Share of this headline's key words found in the group's core
+            score = len(title_tokens & _core(c)) / (len(title_tokens) or 1)
+            # Same outlet: many templated headlines ("X Share Price Highlights") look alike
+            needed = 0.7 if any(i["source"] == item["source"] for i in c["items"]) else 0.4
+            if inter >= 3 and score >= needed and score > best_score:
                 best, best_score = c, score
-        if best and best_score >= 0.4:
+        if best:
             best["items"].append(item)
             best["tokens"] |= item_tokens
+            best["titles"].append(title_tokens)
         else:
-            clusters.append({"items": [item], "tokens": set(item_tokens)})
-    return clusters
+            clusters.append({"items": [item], "tokens": set(item_tokens), "titles": [title_tokens]})
+    return _merge_similar(clusters)
 
 
 def score(c, trends):

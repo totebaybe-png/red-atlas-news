@@ -18,15 +18,17 @@ def _read(item):
     return {**item, "text": text[: config.MAX_SOURCE_CHARS]}
 
 
-def gather(story, max_sources=4):
-    """Full text from up to max_sources different outlets."""
+def gather(story, max_sources=4, max_tries=8):
+    """Full text from up to max_sources different outlets. Tries up to max_tries outlets, because
+    some block readers or sit behind paywalls, and keeps the ones with the most reporting."""
     picked, outlets = [], set()
     for item in story["items"]:
         if item["source"] not in outlets:
             outlets.add(item["source"])
             picked.append(item)
-        if len(picked) == max_sources:
+        if len(picked) == max_tries:
             break
-    with ThreadPoolExecutor(max_workers=4) as pool:
-        docs = list(pool.map(_read, picked))
-    return [d for d in docs if len(d["text"]) >= 150]
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        docs = [d for d in pool.map(_read, picked) if len(d["text"]) >= 150]
+    docs.sort(key=lambda d: len(d["text"]), reverse=True)
+    return docs[:max_sources]

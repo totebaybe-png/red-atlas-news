@@ -113,6 +113,14 @@ FEEDS = {
     "The Straits Times": ["https://www.straitstimes.com/news/world/rss.xml"],
     # Middle East, Africa, Oceania
     "The National": ["https://www.thenationalnews.com/arc/outboundfeeds/rss/?outputType=xml"],
+    # Egypt and the Arab world (English): richer detail on the region than global wires
+    "Egypt Independent": ["https://www.egyptindependent.com/feed/"],
+    "Daily News Egypt": ["https://www.dailynewsegypt.com/feed/"],
+    "Gulf News": ["https://gulfnews.com/feed"],
+    "Khaleej Times": ["https://www.khaleejtimes.com/stories.rss"],
+    "Asharq Al-Awsat": ["https://english.aawsat.com/feed"],
+    "The New Arab": ["https://www.newarab.com/rss"],
+    "Al-Monitor": ["https://www.al-monitor.com/rss"],
     "The Times of Israel": ["https://www.timesofisrael.com/feed/"],
     "Africanews": ["https://www.africanews.com/feed/rss"],
     "ABC Australia": ["https://www.abc.net.au/news/feed/51120/rss.xml"],
